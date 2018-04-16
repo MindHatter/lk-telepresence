@@ -1,0 +1,8 @@
+<launch>
+
+    <rosparam command="load" file="$(find telepresence)/config.yaml" />
+    <include  file="$(find telepresence)/launch/remote.launch" />
+    <include  file="$(find telepresence)/launch/local.launch" />
+    <!-- <node name="app" pkg="telepresence" type="app.py" output="screen"/> -->
+    
+</launch>
