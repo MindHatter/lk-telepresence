@@ -1,10 +1,10 @@
 # IP Config
-ROS_IP: 192.168.2.53
-ROBOT_IP: 192.168.2.7
-ROBOT_USER: ubuntu
-ROS_MASTER_URI: http://192.168.2.53:11311
+ROS_IP: 192.168.2.120
+ROBOT_IP: 192.168.2.121
+ROBOT_USER: r2d2
+ROSLAUNCH_SSH_UNKNOWN: 1
 
 # Camera config
-CAMERA_RATE: 5
-CAMERA_IMAGE_WIDTH: 320
-CAMERA_IMAGE_HEIGHT: 240
+/cv_camera/rate: 5
+/cv_camera/image_width: 320
+/cv_camera/image_height: 240

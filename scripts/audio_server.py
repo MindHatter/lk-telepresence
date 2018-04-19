@@ -1,8 +1,9 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import pyaudio
 import socket
 import select
+import rospy
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -12,7 +13,7 @@ CHUNK = 4096
 audio = pyaudio.PyAudio()
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.bind(('192.168.2.53', 5555))
+serversocket.bind((rospy.get_param('ROS_IP'), 5555))
 serversocket.listen(1)
 
 

@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
-
 import pyaudio
 import socket
 import sys
 import time
+import rospy
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -13,7 +12,7 @@ CHUNK = 4096
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 while True:
     try:
-        s.connect(('192.168.2.53', 5555))
+        s.connect((rospy.get_param('ROS_IP'), 5555))
     except:
         pass
     else:

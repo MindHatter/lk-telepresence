@@ -5,6 +5,7 @@
 import os
 import sys
 import cv2
+import yaml
 
 # PyQt
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -36,8 +37,10 @@ class Editor(QtWidgets.QDialog, editgui.Ui_Editgui):
 
         self.cfg_path = os.path.join(self.pkg_path, 'config.yaml')
         with open(self.cfg_path, 'r') as cfg:
+            data = cfg.read()
+            self.load(data)
             self.YamlEdit.clear()
-            self.YamlEdit.appendPlainText(cfg.read())
+            self.YamlEdit.appendPlainText(data)
 
     def apply(self):
         os.system("cp {0} {0}.bak".format(self.cfg_path))
@@ -48,6 +51,14 @@ class Editor(QtWidgets.QDialog, editgui.Ui_Editgui):
         with open("{}.bak".format(self.cfg_path), 'r') as cfg:
             self.YamlEdit.clear()
             self.YamlEdit.appendPlainText(cfg.read())
+
+    def load(self, data):
+        data = yaml.load(data)
+        for key in data.keys():
+            print(key, str(data[key]))
+            os.environ[key] = str(data[key])
+        print('Load params')
+
 
 
 class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
@@ -83,7 +94,6 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         self.is_launch = False
         self.twist = Twist() 
         self.bridge = CvBridge()
-        self.edit = Editor()
 
         self.move_values = {
             87: ('forward',(2.0, 0.0)),
@@ -191,7 +201,7 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
             self.logout("Audio is unmuted")
 
     def config(self):
-        self.edit.show()
+        edit.show()
 
 
 if __name__ == "__main__":
@@ -199,7 +209,7 @@ if __name__ == "__main__":
     # master.start()
     app = QtWidgets.QApplication(sys.argv)
     tele = Telepresence()
-    edit = Editor()
     tele.show()
+    edit = Editor()
     app.exec_()
     # master.stop()

@@ -1,8 +1,7 @@
-#!/usr/bin/env python
-
 import pyaudio
 import socket
 import select
+import rospy
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -12,7 +11,7 @@ CHUNK = 4096
 audio = pyaudio.PyAudio()
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.bind(('192.168.2.7', 4444))
+serversocket.bind((rospy.get_param('ROBOT_IP'), 4444))
 serversocket.listen(1)
 
 
