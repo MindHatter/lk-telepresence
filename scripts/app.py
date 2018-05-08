@@ -89,7 +89,7 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
 
         rospy.Subscriber("/cv_camera/image_raw", Image, self.video_cap)
         rospy.Subscriber("/battery", UInt8, self.battery)
-        self.teleop_pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
+        self.teleop_pub = rospy.Publisher("cmd_vel_mux/input/teleop", Twist, queue_size=1)
 
         self.is_launch = False
         self.twist = Twist() 

@@ -1,10 +1,15 @@
 <launch>
     <machine name="robot" address="$(optenv ROBOT_IP)" env-loader="~/ros_ssh.bash" user="$(optenv ROBOT_USER)" default="true">
     </machine>
-
+    
     <!-- <include  file="$(find usb_cam)/launch/usb_cam.launch" /> -->
     <node name="audio_client_for_robot" pkg="telepresence" type="audio_client_for_robot.py" output="screen"/>
     <node name="audio_server_for_robot" pkg="telepresence" type="audio_server_for_robot.py" output="screen"/>
-    <node name="cv_camera" pkg="cv_camera" type="cv_camera_node" output="screen">
+    <node name="cv_camera" pkg="cv_camera" type="cv_camera_node" output="screen"/>
+
+    <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+        <param name="port" value="/dev/ttyACM0"/>
+        <param name="baud" value="9600"/>
     </node>
+    <node pkg="telepresence" type="twist_to_motors.py" name="twist_to_motors"/>
 </launch>
