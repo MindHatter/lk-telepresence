@@ -3,9 +3,12 @@
 
 # Python Standart Library
 import os
-import sys
 import cv2
 import yaml
+import datetime
+import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 # PyQt
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -17,7 +20,7 @@ import editgui
 import roslaunch
 import rospkg
 import rospy
-from std_msgs.msg import UInt8
+from std_msgs.msg import UInt8, String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -60,7 +63,6 @@ class Editor(QtWidgets.QDialog, editgui.Ui_Editgui):
         print('Load params')
 
 
-
 class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
     def __init__(self):
         # GUI init
@@ -85,10 +87,12 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         self.uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(self.uuid)
         rospack = rospkg.RosPack()
-        self.pkg_path=rospack.get_path('telepresence')
+        self.pkg_path = rospack.get_path('telepresence')
+        self.log_path = os.path.join(self.pkg_path, 'logs')
 
         rospy.Subscriber("/cv_camera/image_raw", Image, self.video_cap)
         rospy.Subscriber("/battery", UInt8, self.battery)
+        rospy.Subscriber("/recognized", String, self.logout)
         self.teleop_pub = rospy.Publisher("cmd_vel_mux/input/teleop", Twist, queue_size=1)
 
         self.is_launch = False
@@ -103,8 +107,26 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
             32: ('stop',(0.0, 0.0)),
         }
 
+        self.log = ''
+
+    def dt_cut(self, dt):
+        return str(dt).split('.')[0]
+
+    def log_save(self):
+        path = os.path.join(self.log_path, "{}.txt".format(self.dt_cut(datetime.datetime.now())))
+        print (path)
+        with open(path, 'w') as f:
+            f.write(self.log)
+
     def logout(self, msg):
+        try:
+            msg = msg.data
+        except:
+            pass
+
+        msg = '{} {}'.format(self.dt_cut(datetime.datetime.now()), msg)
         self.LogBrowser.append(msg)
+        self.log += '{}\n'.format(msg)
 
     def battery(self, msg):
         self.BatteryBar.setValue(msg.data)
@@ -121,11 +143,12 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
             pass
 
     def move_gen_and_pub(self, key):
-        move_value = self.move_values[key]
-        self.twist.linear.x = move_value[-1][0]
-        self.twist.angular.z = move_value[-1][1]
-        self.teleop_pub.publish(self.twist)
-        self.logout("Robot move value: {}".format(move_value[0]))
+        if self.is_launch:
+            move_value = self.move_values[key]
+            self.twist.linear.x = move_value[-1][0]
+            self.twist.angular.z = move_value[-1][1]
+            self.teleop_pub.publish(self.twist)
+            self.logout("Move command: {}".format(move_value[0]))
 
     def keyPressEvent(self, event):
         key = event.key()
@@ -153,6 +176,8 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
             self.Video.setText('Видео отсутствует')
             self.LaunchButton.setText('Запустить')
             self.LaunchButton.setEnabled(True)
+            self.log_save()
+            self.log = ''
         else:
             self.LaunchButton.setEnabled(False)
             try:
@@ -164,7 +189,7 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
                 # self.local_launch.start()
                 self.LaunchButton.setText('Остановить')
             except roslaunch.core.RLException as e:
-                self.logout(str(e))
+                self.logout("Error: {}".format(str(e)))
                 self.is_launch = not self.is_launch
             self.LaunchButton.setEnabled(True)
         self.is_launch = not self.is_launch

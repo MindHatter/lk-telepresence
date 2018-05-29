@@ -1,4 +1,5 @@
 <launch>
     <node name="audio_client" pkg="telepresence" type="audio_client.py" output="screen"/>
     <node name="audio_server" pkg="telepresence" type="audio_server.py" output="screen"/>
+    <node name="recognizer" pkg="telepresence" type="recognizer.py" output="screen"/>
 </launch>

@@ -12,4 +12,6 @@
         <param name="baud" value="9600"/>
     </node>
     <node pkg="telepresence" type="twist_to_motors.py" name="twist_to_motors"/>
+    <node name="recognizer_for_robot" pkg="telepresence" type="recognizer.py" output="screen"/>
+
 </launch>
