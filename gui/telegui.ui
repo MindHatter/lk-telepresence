@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>840</x>
-     <y>100</y>
+     <y>90</y>
      <width>181</width>
-     <height>351</height>
+     <height>291</height>
     </rect>
    </property>
    <property name="font">
@@ -43,9 +43,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>80</y>
+      <y>60</y>
       <width>16</width>
-      <height>231</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -65,9 +65,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>80</y>
+      <y>60</y>
       <width>16</width>
-      <height>231</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -81,7 +81,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>320</y>
+      <y>260</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -105,7 +105,7 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>320</y>
+      <y>260</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -129,7 +129,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>50</y>
+      <y>30</y>
       <width>16</width>
       <height>21</height>
      </rect>
@@ -154,7 +154,7 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>50</y>
+      <y>30</y>
       <width>16</width>
       <height>21</height>
      </rect>
@@ -166,13 +166,6 @@
      <string/>
     </property>
    </widget>
-   <zorder>MicSlider</zorder>
-   <zorder>HeadsetSlider</zorder>
-   <zorder>MicLabel</zorder>
-   <zorder>HeadsetLabel</zorder>
-   <zorder>MicCheck</zorder>
-   <zorder>HeadsetCheck</zorder>
-   <zorder>BatteryBox</zorder>
   </widget>
   <widget class="QGroupBox" name="VideoBox">
    <property name="geometry">
@@ -250,7 +243,7 @@
    <property name="geometry">
     <rect>
      <x>840</x>
-     <y>460</y>
+     <y>390</y>
      <width>181</width>
      <height>201</height>
     </rect>
@@ -508,6 +501,60 @@
     </property>
     <property name="format">
      <string>%p%</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>840</x>
+     <y>590</y>
+     <width>181</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Распознавание</string>
+   </property>
+   <widget class="QCheckBox" name="RecoOnCheck">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>21</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="RecoLabel">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Вкл./Выкл.</string>
     </property>
    </widget>
   </widget>

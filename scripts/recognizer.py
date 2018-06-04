@@ -13,7 +13,7 @@ from keys import wit_access_token
 from threading import Thread
 
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool, Empty
 
 # Wit speech API endpoint
 API_ENDPOINT = 'https://api.wit.ai/speech'
@@ -99,10 +99,26 @@ def recognize_speech(AUDIO_FILENAME, num_seconds = 5):
     t = MyThread(audio)
     t.start()
 
+def reco_on(msg):
+    global is_reco
+    global is_toggle
+    is_reco = msg.data
+    if not is_reco:
+        is_toggle = False
+
+def reco_toggle(msg):
+    global is_toggle
+    is_toggle = not is_toggle
 
 if __name__ == "__main__":
+    is_reco = False
+    is_toggle = False
     rospy.init_node("recognizer", anonymous=True)
+    rospy.Subscriber("/reco_on", Bool, reco_on)
+    rospy.Subscriber("/reco_toggle", Empty, reco_on)
     reco_pub = rospy.Publisher("/recognized", String, queue_size=1)
     reco = String()
+
     while True:
-        recognize_speech('myspeech.wav', 8)
+        if is_reco and is_toggle:
+            recognize_speech('myspeech.wav', 8)

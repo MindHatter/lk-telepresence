@@ -20,7 +20,7 @@ import editgui
 import roslaunch
 import rospkg
 import rospy
-from std_msgs.msg import UInt8, String
+from std_msgs.msg import UInt8, String, Bool, Empty
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -81,6 +81,7 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         self.StopButton.clicked.connect(self.move_stop)
         self.LaunchButton.clicked.connect(self.launch)
         self.ConfigButton.clicked.connect(self.config)
+        self.RecoOnCheck.toggled.connect(self.reco_on)
 
         # ROS Init
         rospy.init_node('telegui')
@@ -94,7 +95,9 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         rospy.Subscriber("/battery", UInt8, self.battery)
         rospy.Subscriber("/recognized", String, self.logout)
         self.teleop_pub = rospy.Publisher("cmd_vel_mux/input/teleop", Twist, queue_size=1)
-
+        self.reco_on_pub = rospy.Publisher("/reco_on", Bool, queue_size=1)
+        self.reco_toggle_pub = rospy.Publisher("/reco_toggle", Empty, queue_size=1)
+        self.is_reco = False
         self.is_launch = False
         self.twist = Twist() 
         self.bridge = CvBridge()
@@ -108,6 +111,16 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         }
 
         self.log = ''
+
+        os.system("amixer set Capture nocap")
+
+    def reco_on(self):
+        if self.is_launch:
+            if self.RecoOnCheck.isChecked():
+                self.is_reco = True
+            else:
+                self.is_reco = False
+            self.reco_on_pub.publish(self.is_reco)
 
     def dt_cut(self, dt):
         return str(dt).split('.')[0]
@@ -152,8 +165,23 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
 
     def keyPressEvent(self, event):
         key = event.key()
+        print(key)
         if key in self.move_values.keys():
             self.move_gen_and_pub(key)
+        if key == 16777248:
+            os.system("amixer set Capture cap")
+            self.logout("Mic is unmuted")
+            if self.is_reco:
+                self.reco_toggle_pub.publish()
+
+    def keyReleaseEvent(self, event):
+        key = event.key()
+        #print(key)
+        if key == 16777248:
+            os.system("amixer set Capture nocap")
+            self.logout("Mic is muted")
+            if self.is_reco:
+                self.reco_toggle_pub.publish()
 
     def move_up(self):
         self.move_gen_and_pub(87)
@@ -198,6 +226,7 @@ class Telepresence(QtWidgets.QDialog, telegui.Ui_Telegui):
         value = self.MicSlider.value()
         os.system("amixer set Capture {}%".format(value))
         self.logout("Mic value: {}".format(value))
+        os.system("amixer set Capture nocap")
 
     def hs_change(self):
         value = self.HeadsetSlider.value()
